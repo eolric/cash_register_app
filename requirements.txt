@@ -1,0 +1,7 @@
+antiorm
+db
+db-sqlite3
+PyQt5
+PyQt5-Qt5
+PyQt5_sip
+PyQt5Designer

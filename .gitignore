@@ -1,0 +1,4 @@
+# Ignorar carpetas específicas
+Lib/
+Include/
+Scripts/
