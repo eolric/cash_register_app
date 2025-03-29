@@ -1,0 +1,28 @@
+{
+    "database_name": "licoreria.db",
+    "tables": {
+      "products": {
+        "fields": {
+          "codigo": {"type": "TEXT", "constraints": "PRIMARY KEY"},
+          "nombre": {"type": "TEXT", "constraints": "NOT NULL"},
+          "cantidad": {"type": "INTEGER", "constraints": "NOT NULL"},
+          "precio_compra": {"type": "REAL", "constraints": "NOT NULL"},
+          "precio_venta": {"type": "REAL", "constraints": "NOT NULL"}
+        }
+      },
+      "sales": {
+        "fields": {
+          "id": {"type": "INTEGER", "constraints": "PRIMARY KEY AUTOINCREMENT"},
+          "fecha": {"type": "TEXT", "constraints": "NOT NULL"},
+          "hora": {"type": "TEXT", "constraints": "NOT NULL"},
+          "codigo_producto": {"type": "TEXT", "constraints": "NOT NULL"},
+          "cantidad": {"type": "INTEGER", "constraints": "NOT NULL"},
+          "descuento": {"type": "REAL", "constraints": "DEFAULT 0"},
+          "vendedor": {"type": "TEXT", "constraints": "DEFAULT 'Sistema'"}
+        },
+        "foreign_keys": [
+          "FOREIGN KEY (codigo_producto) REFERENCES productos(codigo)"
+        ]
+      }
+    }
+  }
