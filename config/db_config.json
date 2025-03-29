@@ -1,7 +1,7 @@
 {
     "database_name": "licoreria.db",
     "tables": {
-      "products": {
+      "productos": {
         "fields": {
           "codigo": {"type": "TEXT", "constraints": "PRIMARY KEY"},
           "nombre": {"type": "TEXT", "constraints": "NOT NULL"},
@@ -10,7 +10,7 @@
           "precio_venta": {"type": "REAL", "constraints": "NOT NULL"}
         }
       },
-      "sales": {
+      "ventas": {
         "fields": {
           "id": {"type": "INTEGER", "constraints": "PRIMARY KEY AUTOINCREMENT"},
           "fecha": {"type": "TEXT", "constraints": "NOT NULL"},

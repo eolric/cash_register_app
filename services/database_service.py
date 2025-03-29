@@ -1,6 +1,7 @@
 import sqlite3
 import csv
 from datetime import datetime
+import os
 from pathlib import Path
 from services.config_service import cargar_configuracion, generar_sql_creacion_tabla
 
