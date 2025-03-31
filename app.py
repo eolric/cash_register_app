@@ -143,6 +143,18 @@ def registrar_venta_interactivo(conn):
     
     # Mostrar ticket
     if productos_vendidos:
+        # Código para calcular el cambio
+        while True:
+            try:
+                efectivo_recibido = float(input("Efectivo recibido: "))
+                if efectivo_recibido < total:
+                    print(f"Error: El efectivo ({efectivo_recibido:.2f}) no cubre el total ({total:.2f}). Intente nuevamente.")
+                else:
+                    cambio = efectivo_recibido - total
+                    break  # Salir del bucle si el pago es suficiente
+            except ValueError:
+                print("Error: Ingrese un valor numérico válido")
+
         print("\n--- TICKET DE VENTA ---")
         print("{:<20} {:<10} {:<10} {:<10} {:<10} {:<10}".format(
             "Producto", "Cantidad", "P. Unit.", "Desc.%", "Subtotal", "Vendedor"
@@ -158,7 +170,9 @@ def registrar_venta_interactivo(conn):
                 prod['vendedor']
             ))
         print("-" * 80)
-        print(f"TOTAL A PAGAR: {total:.2f}\n")
+        print(f"TOTAL A PAGAR: {total:.2f}")
+        print(f"Efectivo recibido: {efectivo_recibido:.2f}")
+        print(f"Cambio a devolver: {cambio:.2f}\n")
 
 def consultar_ventas_fecha_interactivo(conn):
     print("\n--- CONSULTAR VENTAS POR FECHA ---")
