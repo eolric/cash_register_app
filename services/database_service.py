@@ -80,6 +80,28 @@ def obtener_productos(conn):
         print(f"Error al obtener productos: {e}")
         return []
 
+def eliminar_producto(conn, codigo):
+    """Eliminar un producto de la base de datos"""
+    try:
+        cursor = conn.cursor()
+        # Verificar si el producto existe
+        cursor.execute("SELECT nombre FROM productos WHERE codigo = ?", (codigo,))
+        producto = cursor.fetchone()
+        
+        if not producto:
+            print("Producto no encontrado")
+            return False
+            
+        # Eliminar el producto
+        cursor.execute("DELETE FROM productos WHERE codigo = ?", (codigo,))
+        conn.commit()
+        print(f"Producto '{producto[0]}' eliminado exitosamente")
+        return True
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Error al eliminar producto: {e}")
+        return False
+
 def registrar_venta(conn, venta):
     """Registrar una venta y actualizar el stock"""
     try:
