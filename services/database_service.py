@@ -102,6 +102,21 @@ def eliminar_producto(conn, codigo):
         print(f"Error al eliminar producto: {e}")
         return False
 
+def buscar_productos(conn, criterio):
+    """Buscar productos por código o nombre"""
+    try:
+        cursor = conn.cursor()
+        # Buscar por código exacto o nombre que contenga el criterio
+        cursor.execute("""
+            SELECT * FROM productos 
+            WHERE codigo = ? OR nombre LIKE ?
+            ORDER BY nombre
+        """, (criterio, f'%{criterio}%'))
+        return cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"Error al buscar productos: {e}")
+        return []
+
 def registrar_venta(conn, venta):
     """Registrar una venta y actualizar el stock"""
     try:

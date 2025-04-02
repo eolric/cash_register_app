@@ -12,7 +12,8 @@ from services.database_service import (
     actualizar_inventario,
     consultar_ventas_por_fecha,
     exportar_reporte_csv,
-    eliminar_producto
+    eliminar_producto,
+    buscar_productos
 )
 
 def mostrar_menu():
@@ -27,9 +28,10 @@ def menu_productos(conn):
         print("\n--- GESTIÓN DE PRODUCTOS ---")
         print("1. Agregar nuevo producto")
         print("2. Ver todos los productos")
-        print("3. Actualizar inventario")
-        print("4. Eliminar producto")
-        print("5. Volver al menú principal")
+        print("3. Buscar productos")
+        print("4. Actualizar inventario")
+        print("5. Eliminar producto")
+        print("6. Volver al menú principal")
         
         opcion = input("Seleccione una opción: ")
         
@@ -38,10 +40,12 @@ def menu_productos(conn):
         elif opcion == "2":
             ver_productos(conn)
         elif opcion == "3":
-            actualizar_inventario_interactivo(conn)
+            buscar_productos_interactivo(conn)
         elif opcion == "4":
-            eliminar_producto_interactivo(conn)
+            actualizar_inventario_interactivo(conn)
         elif opcion == "5":
+            eliminar_producto_interactivo(conn)
+        elif opcion == "6":
             break
         else:
             print("Opción no válida")
@@ -87,6 +91,30 @@ def actualizar_inventario_interactivo(conn):
             print("Producto no encontrado")
     except ValueError:
         print("Error: La cantidad debe ser un número entero")
+
+def buscar_productos_interactivo(conn):
+    print("\n--- BUSCAR PRODUCTOS ---")
+    criterio = input("Ingrese código o palabra clave del nombre: ").strip()
+    
+    if not criterio:
+        print("Debe ingresar un criterio de búsqueda")
+        return
+    
+    productos = buscar_productos(conn, criterio)
+    
+    if not productos:
+        print("No se encontraron productos con ese criterio")
+        return
+    
+    print("\n--- RESULTADOS DE BÚSQUEDA ---")
+    print("{:<10} {:<20} {:<10} {:<15} {:<15}".format(
+        "Código", "Nombre", "Cantidad", "P. Compra", "P. Venta"
+    ))
+    print("-" * 70)
+    for prod in productos:
+        print("{:<10} {:<20} {:<10} {:<15.2f} {:<15.2f}".format(
+            prod[0], prod[1], prod[2], prod[3], prod[4]
+        ))
 
 def eliminar_producto_interactivo(conn):
     print("\n--- ELIMINAR PRODUCTO ---")
