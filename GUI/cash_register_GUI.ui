@@ -417,7 +417,7 @@ font: 77 7pt &quot;Arial Black&quot;;
                 <item>
                  <widget class="QStackedWidget" name="stackedWidget_2">
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>2</number>
                   </property>
                   <widget class="QWidget" name="page_subDB">
                    <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -751,7 +751,7 @@ QTableWidget QTableCornerButton::section {
                      </layout>
                     </item>
                     <item>
-                     <widget class="QTableWidget" name="tableWidget_2">
+                     <widget class="QTableWidget" name="tableWidget_pgSearch">
                       <column>
                        <property name="text">
                         <string>CÓDIGO</string>
@@ -782,7 +782,7 @@ QTableWidget QTableCornerButton::section {
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_14">
                       <item>
-                       <widget class="QLabel" name="label_17">
+                       <widget class="QLabel" name="label_pgSearch">
                         <property name="minimumSize">
                          <size>
                           <width>200</width>
@@ -868,10 +868,10 @@ QTableWidget QTableCornerButton::section {
                          <number>30</number>
                         </property>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_6"/>
+                         <widget class="QLineEdit" name="lineEdit_cnt_pgUpdate"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_7"/>
+                         <widget class="QLineEdit" name="lineEdit_cod_pgUpdate"/>
                         </item>
                        </layout>
                       </item>
@@ -906,7 +906,7 @@ QTableWidget QTableCornerButton::section {
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_9">
                       <item>
-                       <widget class="QLabel" name="label_11">
+                       <widget class="QLabel" name="label_pgUpdate">
                         <property name="minimumSize">
                          <size>
                           <width>200</width>
@@ -935,7 +935,7 @@ QTableWidget QTableCornerButton::section {
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_2">
+                       <widget class="QPushButton" name="bt_update_pgUpdate">
                         <property name="minimumSize">
                          <size>
                           <width>120</width>
@@ -964,7 +964,7 @@ QTableWidget QTableCornerButton::section {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QTableWidget" name="table_productos">
+                     <widget class="QTableWidget" name="tableWidget_produc_pgVer">
                       <column>
                        <property name="text">
                         <string>CODIGO</string>
@@ -1033,7 +1033,7 @@ QTableWidget QTableCornerButton::section {
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="bt_refrescar">
+                       <widget class="QPushButton" name="bt_refrescar_pgVer">
                         <property name="minimumSize">
                          <size>
                           <width>100</width>
@@ -1138,16 +1138,16 @@ QTableWidget QTableCornerButton::section {
                       <item>
                        <layout class="QVBoxLayout" name="verticalLayout_15">
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_9"/>
+                         <widget class="QLineEdit" name="lineEdit_cod_pgRegisterSale"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_10"/>
+                         <widget class="QLineEdit" name="lineEdit_cnt_pgRegisterSale"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_11"/>
+                         <widget class="QLineEdit" name="lineEdit_desc_pgRegisterSale"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_12"/>
+                         <widget class="QLineEdit" name="lineEdit_vend_pgRegisterSale"/>
                         </item>
                        </layout>
                       </item>
@@ -1182,7 +1182,7 @@ QTableWidget QTableCornerButton::section {
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_17">
                       <item>
-                       <widget class="QLabel" name="label_23">
+                       <widget class="QLabel" name="label_pgRegisterSale">
                         <property name="minimumSize">
                          <size>
                           <width>150</width>
@@ -1211,7 +1211,7 @@ QTableWidget QTableCornerButton::section {
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_5">
+                       <widget class="QPushButton" name="bt_add_pgRegisterSale">
                         <property name="minimumSize">
                          <size>
                           <width>150</width>
@@ -1250,10 +1250,10 @@ QTableWidget QTableCornerButton::section {
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_13"/>
+                       <widget class="QLineEdit" name="lineEdit_efect_pgRegisterSale"/>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_6">
+                       <widget class="QPushButton" name="bt_finish_pgRegisterSale">
                         <property name="minimumSize">
                          <size>
                           <width>150</width>
@@ -1336,13 +1336,13 @@ QTableWidget QTableCornerButton::section {
                       <item>
                        <layout class="QVBoxLayout" name="verticalLayout_18">
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_14"/>
+                         <widget class="QLineEdit" name="lineEdit_iniDate_pgSearchSale"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_15"/>
+                         <widget class="QLineEdit" name="lineEdit_finDate_pgSearchSale"/>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="pushButton_7">
+                         <widget class="QPushButton" name="bt_search_pgSearchSale">
                           <property name="minimumSize">
                            <size>
                             <width>150</width>
@@ -1385,7 +1385,7 @@ QTableWidget QTableCornerButton::section {
                      </spacer>
                     </item>
                     <item>
-                     <widget class="QTableWidget" name="tableWidget_3">
+                     <widget class="QTableWidget" name="tableWidget_pgSearchSale">
                       <column>
                        <property name="text">
                         <string>FECHA</string>
@@ -1498,16 +1498,16 @@ QTableWidget QTableCornerButton::section {
                       <item>
                        <layout class="QVBoxLayout" name="verticalLayout_21">
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_16"/>
+                         <widget class="QLineEdit" name="lineEdit_iniDate_pgReport"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_17"/>
+                         <widget class="QLineEdit" name="lineEdit_finDate_pgReport"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_18"/>
+                         <widget class="QLineEdit" name="lineEdit_nameDoc_pgReport"/>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="pushButton_8">
+                         <widget class="QPushButton" name="bt_download_pgReport">
                           <property name="minimumSize">
                            <size>
                             <width>150</width>
@@ -1550,7 +1550,7 @@ QTableWidget QTableCornerButton::section {
                      </spacer>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label_33">
+                     <widget class="QLabel" name="label_pgReport">
                       <property name="minimumSize">
                        <size>
                         <width>200</width>
@@ -1639,19 +1639,19 @@ QTableWidget QTableCornerButton::section {
                          <number>30</number>
                         </property>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit"/>
+                         <widget class="QLineEdit" name="lineEdit_cod_pgAdd"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_2"/>
+                         <widget class="QLineEdit" name="lineEdit_name_pgAdd"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_4"/>
+                         <widget class="QLineEdit" name="lineEdit_cnt_pgAdd"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_3"/>
+                         <widget class="QLineEdit" name="lineEdit_preComp_pgAdd"/>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_5"/>
+                         <widget class="QLineEdit" name="lineEdit_preVenta_pgAdd"/>
                         </item>
                        </layout>
                       </item>
@@ -1686,7 +1686,7 @@ QTableWidget QTableCornerButton::section {
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_4">
                       <item>
-                       <widget class="QLabel" name="label_7">
+                       <widget class="QLabel" name="label_pgAdd">
                         <property name="minimumSize">
                          <size>
                           <width>200</width>
@@ -1715,7 +1715,7 @@ QTableWidget QTableCornerButton::section {
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton">
+                       <widget class="QPushButton" name="bt_add_pgAdd">
                         <property name="minimumSize">
                          <size>
                           <width>120</width>
@@ -1753,10 +1753,10 @@ QTableWidget QTableCornerButton::section {
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="line_in_delete"/>
+                       <widget class="QLineEdit" name="lineEdit_cod_pgDelet"/>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="bt_buscar_delete">
+                       <widget class="QPushButton" name="bt_buscar_pgDelet">
                         <property name="minimumSize">
                          <size>
                           <width>120</width>
@@ -1771,7 +1771,7 @@ QTableWidget QTableCornerButton::section {
                      </layout>
                     </item>
                     <item>
-                     <widget class="QTableWidget" name="tableWidget">
+                     <widget class="QTableWidget" name="tableWidget_pgDelet">
                       <column>
                        <property name="text">
                         <string>CÓDIGO</string>
@@ -1802,7 +1802,7 @@ QTableWidget QTableCornerButton::section {
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_10">
                       <item>
-                       <widget class="QLabel" name="label_15">
+                       <widget class="QLabel" name="label_pgDelet">
                         <property name="minimumSize">
                          <size>
                           <width>200</width>
@@ -1831,7 +1831,7 @@ QTableWidget QTableCornerButton::section {
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_4">
+                       <widget class="QPushButton" name="bt_delete_pgDelete">
                         <property name="minimumSize">
                          <size>
                           <width>120</width>
