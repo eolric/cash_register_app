@@ -11,7 +11,9 @@ from services.database_service import (
     obtener_detalle_venta,
     actualizar_inventario,
     consultar_ventas_por_fecha,
-    exportar_reporte_csv
+    exportar_reporte_csv,
+    eliminar_producto,
+    buscar_productos
 )
 
 def mostrar_menu():
@@ -26,8 +28,10 @@ def menu_productos(conn):
         print("\n--- GESTIÓN DE PRODUCTOS ---")
         print("1. Agregar nuevo producto")
         print("2. Ver todos los productos")
-        print("3. Actualizar inventario")
-        print("4. Volver al menú principal")
+        print("3. Buscar productos")
+        print("4. Actualizar inventario")
+        print("5. Eliminar producto")
+        print("6. Volver al menú principal")
         
         opcion = input("Seleccione una opción: ")
         
@@ -36,8 +40,12 @@ def menu_productos(conn):
         elif opcion == "2":
             ver_productos(conn)
         elif opcion == "3":
-            actualizar_inventario_interactivo(conn)
+            buscar_productos_interactivo(conn)
         elif opcion == "4":
+            actualizar_inventario_interactivo(conn)
+        elif opcion == "5":
+            eliminar_producto_interactivo(conn)
+        elif opcion == "6":
             break
         else:
             print("Opción no válida")
@@ -83,6 +91,62 @@ def actualizar_inventario_interactivo(conn):
             print("Producto no encontrado")
     except ValueError:
         print("Error: La cantidad debe ser un número entero")
+
+def buscar_productos_interactivo(conn):
+    print("\n--- BUSCAR PRODUCTOS ---")
+    criterio = input("Ingrese código o palabra clave del nombre: ").strip()
+    
+    if not criterio:
+        print("Debe ingresar un criterio de búsqueda")
+        return
+    
+    productos = buscar_productos(conn, criterio)
+    
+    if not productos:
+        print("No se encontraron productos con ese criterio")
+        return
+    
+    print("\n--- RESULTADOS DE BÚSQUEDA ---")
+    print("{:<10} {:<20} {:<10} {:<15} {:<15}".format(
+        "Código", "Nombre", "Cantidad", "P. Compra", "P. Venta"
+    ))
+    print("-" * 70)
+    for prod in productos:
+        print("{:<10} {:<20} {:<10} {:<15.2f} {:<15.2f}".format(
+            prod[0], prod[1], prod[2], prod[3], prod[4]
+        ))
+
+def eliminar_producto_interactivo(conn):
+    print("\n--- ELIMINAR PRODUCTO ---")
+    codigo = input("Ingrese el código del producto a eliminar: ")
+    
+    # Mostrar información del producto antes de eliminar
+    productos = obtener_productos(conn)
+    producto_a_eliminar = None
+    
+    for prod in productos:
+        if prod[0] == codigo:
+            producto_a_eliminar = prod
+            break
+    
+    if producto_a_eliminar:
+        print("\nProducto encontrado:")
+        print(f"Código: {producto_a_eliminar[0]}")
+        print(f"Nombre: {producto_a_eliminar[1]}")
+        print(f"Cantidad: {producto_a_eliminar[2]}")
+        print(f"Precio compra: {producto_a_eliminar[3]:.2f}")
+        print(f"Precio venta: {producto_a_eliminar[4]:.2f}")
+        
+        confirmacion = input("\n¿Está seguro que desea eliminar este producto? (s/n): ").lower()
+        if confirmacion == 's':
+            if eliminar_producto(conn, codigo):
+                print("Producto eliminado exitosamente")
+            else:
+                print("No se pudo eliminar el producto")
+        else:
+            print("Operación cancelada")
+    else:
+        print("Producto no encontrado")
 
 def menu_ventas(conn):
     while True:
@@ -143,7 +207,21 @@ def registrar_venta_interactivo(conn):
     
     # Mostrar ticket
     if productos_vendidos:
+        # Código para calcular el cambio
+        while True:
+            try:
+                efectivo_recibido = float(input("Efectivo recibido: "))
+                if efectivo_recibido < total:
+                    print(f"Error: El efectivo ({efectivo_recibido:.2f}) no cubre el total ({total:.2f}). Intente nuevamente.")
+                else:
+                    cambio = efectivo_recibido - total
+                    break  # Salir del bucle si el pago es suficiente
+            except ValueError:
+                print("Error: Ingrese un valor numérico válido")
+
         print("\n--- TICKET DE VENTA ---")
+        print(f"Fecha: {datetime.now().strftime('%Y-%m-%d')}")
+        print(f"Hora: {datetime.now().strftime('%H:%M:%S')}")
         print("{:<20} {:<10} {:<10} {:<10} {:<10} {:<10}".format(
             "Producto", "Cantidad", "P. Unit.", "Desc.%", "Subtotal", "Vendedor"
         ))
@@ -158,7 +236,9 @@ def registrar_venta_interactivo(conn):
                 prod['vendedor']
             ))
         print("-" * 80)
-        print(f"TOTAL A PAGAR: {total:.2f}\n")
+        print(f"TOTAL A PAGAR: {total:.2f}")
+        print(f"Efectivo recibido: {efectivo_recibido:.2f}")
+        print(f"Cambio a devolver: {cambio:.2f}\n")
 
 def consultar_ventas_fecha_interactivo(conn):
     print("\n--- CONSULTAR VENTAS POR FECHA ---")
