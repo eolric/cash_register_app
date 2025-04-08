@@ -110,8 +110,8 @@ QPushButton:hover{
             </property>
             <property name="iconSize">
              <size>
-              <width>38</width>
-              <height>30</height>
+              <width>40</width>
+              <height>40</height>
              </size>
             </property>
            </widget>
@@ -133,7 +133,7 @@ QPushButton:hover{
            <widget class="QPushButton" name="bt_minimizar">
             <property name="minimumSize">
              <size>
-              <width>40</width>
+              <width>50</width>
               <height>40</height>
              </size>
             </property>
@@ -146,8 +146,8 @@ QPushButton:hover{
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>40</width>
+              <height>40</height>
              </size>
             </property>
            </widget>
@@ -156,7 +156,7 @@ QPushButton:hover{
            <widget class="QPushButton" name="bt_restaurar">
             <property name="minimumSize">
              <size>
-              <width>40</width>
+              <width>50</width>
               <height>40</height>
              </size>
             </property>
@@ -169,8 +169,8 @@ QPushButton:hover{
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>40</width>
+              <height>40</height>
              </size>
             </property>
            </widget>
@@ -179,7 +179,7 @@ QPushButton:hover{
            <widget class="QPushButton" name="bt_maximizar">
             <property name="minimumSize">
              <size>
-              <width>40</width>
+              <width>50</width>
               <height>40</height>
              </size>
             </property>
@@ -192,8 +192,8 @@ QPushButton:hover{
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>38</height>
+              <width>40</width>
+              <height>40</height>
              </size>
             </property>
            </widget>
@@ -202,7 +202,7 @@ QPushButton:hover{
            <widget class="QPushButton" name="bt_cerrar">
             <property name="minimumSize">
              <size>
-              <width>40</width>
+              <width>50</width>
               <height>40</height>
              </size>
             </property>
@@ -215,8 +215,8 @@ QPushButton:hover{
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>40</width>
+              <height>40</height>
              </size>
             </property>
            </widget>

@@ -16,6 +16,8 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(747, 591)
         MainWindow.setMinimumSize(QtCore.QSize(100, 100))
+
+        #Configuración de elementos de la ventana principal
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -74,6 +76,7 @@ class Ui_MainWindow(object):
         self.bt_restaurar = QtWidgets.QPushButton(self.frame_sup)
         self.bt_restaurar.setMinimumSize(QtCore.QSize(40, 40))
         self.bt_restaurar.setText("")
+        self.bt_restaurar.hide()
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("icons/minimizar.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.bt_restaurar.setIcon(icon2)
