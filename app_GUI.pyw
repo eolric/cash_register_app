@@ -39,10 +39,11 @@ class MiRegisradora(QtWidgets.QMainWindow):
         self.ui.bt_ventas.clicked.connect(self.show_sales_section)
         self.ui.bt_reportes.clicked.connect(self.show_reports_section)
 
-        #botones de los submenus
-        self.ui.bt_ver.clicked.connect(self.control_bt_ver)
-        self.ui.bt_add.clicked.connect(self.control_bt_add)
-        self.ui.bt_delete.clicked.connect(self.control_bt_delete)
+        #botones de control de submenus
+        #Productos
+        self.ui.bt_ver.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_ver))
+        self.ui.bt_add.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_add))
+        self.ui.bt_delete.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_delete))
         self.ui.bt_update.clicked.connect(self.control_bt_update)
         self.ui.bt_search.clicked.connect(self.control_bt_search)
 
