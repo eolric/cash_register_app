@@ -160,29 +160,155 @@ class MiRegisradora(QtWidgets.QMainWindow):
             codigo = self.ui.lineEdit_cod_pgAdd.text()
             nombre = self.ui.lineEdit_name_pgAdd.text()
             cantidad = int(self.ui.lineEdit_cnt_pgAdd.text())
-            # precio_compra = float(input("Precio de compra unitario: "))
-            # precio_venta = float(input("Precio de venta unitario: "))
+            precio_compra = float(self.ui.lineEdit_preComp_pgAdd.text())
+            precio_venta = float(self.ui.lineEdit_preVenta_pgAdd.text())
+
+            # Verificar si el código ya existe
+            cursor = conn.cursor()
+            cursor.execute("SELECT codigo FROM productos WHERE codigo = ?", (codigo,))
+            if cursor.fetchone() is not None:
+                self.ui.label_pgAdd.setText("El producto ya existe, verifique el código")
+                self.ui.label_pgAdd.setStyleSheet("color: red;")
+                return
+        
+            producto = Producto(codigo, nombre, cantidad, precio_compra, precio_venta)
             
-            # producto = Producto(codigo, nombre, cantidad, precio_compra, precio_venta)
-            # insertar_producto(conn, producto)
-        except ValueError:
-            print("Error: Asegúrese de ingresar valores numéricos para cantidad y precios")
-            QtWidgets.QMessageBox.warning(self, "Error", "¡El campo no puede estar vacío!")
+            if insertar_producto(conn, producto):
+                self.ui.label_pgAdd.setText("Producto agregado exitosamente")
+                self.ui.label_pgAdd.setStyleSheet("color: green;")
+                # Limpiar los campos después de agregar
+                self.ui.lineEdit_cod_pgAdd.clear()
+                self.ui.lineEdit_name_pgAdd.clear()
+                self.ui.lineEdit_cnt_pgAdd.clear()
+                self.ui.lineEdit_preComp_pgAdd.clear()
+                self.ui.lineEdit_preVenta_pgAdd.clear()
+
+        except ValueError as e:
+            print(f"Error: {e}")
+            self.ui.label_pgAdd.setText("Error: Verifique los datos ingresados")
+            self.ui.label_pgAdd.setStyleSheet("color: red;")
+            QtWidgets.QMessageBox.warning(self, "Error", "¡Debe ingresar valores válidos!\nLos campos no pueden estar en blanco\nCantidad y precios deben ser números")
 
     def contro_bt_buscar_pgDelet(self):
-        pass
+        conn = crear_conexion()
+        try:
+            codigo = self.ui.lineEdit_cod_pgDelet.text()
+        # Verificar si el código ya existe
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM productos WHERE codigo = ?", (codigo,))
+            producto = cursor.fetchone()
+            if not producto:
+                self.ui.label_pgDelet.setText("El producto no existe, verifique el código")
+                self.ui.label_pgDelet.setStyleSheet("color: red;")
+                return 
+            else:
+                self.ui.tableWidget_pgDelet.setRowCount(1)
+                self.ui.tableWidget_pgDelet.setItem(0, 0, QtWidgets.QTableWidgetItem(str(producto[0])))
+                self.ui.tableWidget_pgDelet.setItem(0, 1, QtWidgets.QTableWidgetItem(str(producto[1])))
+                self.ui.tableWidget_pgDelet.setItem(0, 2, QtWidgets.QTableWidgetItem(str(producto[2])))
+                self.ui.tableWidget_pgDelet.setItem(0, 3, QtWidgets.QTableWidgetItem(str(producto[3])))
+                self.ui.tableWidget_pgDelet.setItem(0, 4, QtWidgets.QTableWidgetItem(str(producto[4])))
+                self.ui.label_pgDelet.setText("")
+        except ValueError as e:
+            print(f"Error: {e}")
+            
 
     def control_bt_delete_pgDelete(self):
-        pass
-
+        conn = crear_conexion()
+        try:
+            codigo = self.ui.lineEdit_cod_pgDelet.text()
+            if not codigo:
+                self.ui.label_pgDelet.setText("Debe de ingresar un código válido")
+                self.ui.label_pgDelet.setStyleSheet("color: red;")
+                return
+        # Mostrar diálogo de confirmación
+            respuesta = QtWidgets.QMessageBox.question(
+                self,
+                "Confirmar eliminación",
+                f"¿Está seguro de eliminar el producto (Código: {codigo})?",
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.No  # Botón por defecto
+            )
+            if respuesta == QtWidgets.QMessageBox.Yes:
+                if eliminar_producto(conn, codigo):
+                    self.ui.label_pgDelet.setText("Éxito, producto eliminado correctamente")
+                    self.ui.label_pgDelet.setStyleSheet("color: green;")
+                    # Limpiar campos después de eliminar
+                    self.ui.lineEdit_cod_pgDelet.clear()
+                    self.ui.tableWidget_pgDelet.setRowCount(0)  # Limpiar la tabla 
+                else:
+                    self.ui.label_pgDelet.setText("Error, no se pudo eliminar el producto")
+                    self.ui.label_pgDelet.setStyleSheet("color: red;")
+            self.ui.label_pgDelet.setText("")
+        except ValueError as e:
+            print(f"Error: {e}")
+            self.ui.label_pgDelet.setText("Error: Verifique el código ingresado")
+            self.ui.label_pgDelet.setStyleSheet("color: red;")
+            
     def control_bt_update_pgUpdate(self):
-        pass
+        conn = crear_conexion()
+        try:
+            codigo = self.ui.lineEdit_cnt_pgUpdate.text()
+            cantidad = int(self.ui.lineEdit_cod_pgUpdate.text())
+            if actualizar_inventario(conn, codigo, cantidad):
+                self.ui.label_pgUpdate.setText("Éxito, producto actualizado correctamente")
+                self.ui.label_pgUpdate.setStyleSheet("color: green;")
+                self.ui.lineEdit_cnt_pgUpdate.clear()
+                self.ui.lineEdit_cod_pgUpdate.clear()
+            else:
+                self.ui.label_pgUpdate.setText("Error, producto no encontrado")
+                self.ui.label_pgUpdate.setStyleSheet("color: red;")
+        except ValueError as e:
+            print(f"Error: {e}")
+            self.ui.label_pgUpdate.setText("Error: Verifique los datos ingresados")
+            self.ui.label_pgUpdate.setStyleSheet("color: red;")
+            QtWidgets.QMessageBox.warning(self, "Error", "¡Debe ingresar valores válidos!\nLos campos no pueden estar en blanco\nCantidad debe ser un número positivo o negativo")
+            return
 
     def control_bt_buscar_pgSearch(self):
-        pass
+        conn = crear_conexion()
+        try:
+            word_clave = self.ui.lineEdit_pgSearch.text().strip()
+            if word_clave:
+                productos = buscar_productos(conn, word_clave)
+                i = len(productos)
+                self.ui.tableWidget_pgSearch.setRowCount(i)
+                table_row = 0
+                for row in productos:
+                    self.ui.tableWidget_pgSearch.setItem(table_row, 0, QtWidgets.QTableWidgetItem(str(row[0])))
+                    self.ui.tableWidget_pgSearch.setItem(table_row, 1, QtWidgets.QTableWidgetItem(str(row[1])))
+                    self.ui.tableWidget_pgSearch.setItem(table_row, 2, QtWidgets.QTableWidgetItem(str(row[2])))
+                    self.ui.tableWidget_pgSearch.setItem(table_row, 3, QtWidgets.QTableWidgetItem(str(row[3])))
+                    self.ui.tableWidget_pgSearch.setItem(table_row, 4, QtWidgets.QTableWidgetItem(str(row[4])))
+                    table_row += 1
+                self.ui.lineEdit_pgSearch.clear()   #Se limpia el campo de búsqueda 
+            if not productos:
+                self.ui.label_pgSearch.setText("No se encontró el producto")
+                self.ui.label_pgSearch.setStyleSheet("color: red;")
+                return
+            self.ui.label_pgSearch.setText("")
+        except ValueError as e:
+            print(f"Error: {e}")
+            self.ui.label_pgSearch.setText("¡Debe ingresar valores válidos!\nLos campos no pueden estar en blanco")
+            self.ui.label_pgSearch.setStyleSheet("color: red;")
+            return
 
     def control_bt_add_pgRegisterSale(self):
-        pass
+        conn = crear_conexion()
+        try:
+            codigo = self.ui.lineEdit_cod_pgRegisterSale.text()
+            cantidad = self.ui.lineEdit_cnt_pgRegisterSale.text()
+            descuento = int(self.ui.lineEdit_desc_pgRegisterSale.text())
+            vendedor = float(self.ui.lineEdit_desc_pgRegisterSale.text())
+            print("\n--- REGISTRAR VENTA ---")
+            productos_vendidos = []
+            total = 0
+            
+        except ValueError as e:
+            print(f"Error: {e}")
+            self.ui.label_pgRegisterSale.setText("Error: Verifique los datos ingresados")
+            self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+            return
 
     def control_bt_finish_pgRegisterSale(self):
         pass
