@@ -752,6 +752,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.lineEdit_name_pgAdd)
         self.lineEdit_cnt_pgAdd = QtWidgets.QLineEdit(self.page_add)
         self.lineEdit_cnt_pgAdd.setObjectName("lineEdit_cnt_pgAdd")
+        self.lineEdit_cnt_pgAdd.setValidator(QtGui.QIntValidator(-100, 100))
         self.verticalLayout_5.addWidget(self.lineEdit_cnt_pgAdd)
         self.lineEdit_preComp_pgAdd = QtWidgets.QLineEdit(self.page_add)
         self.lineEdit_preComp_pgAdd.setObjectName("lineEdit_preComp_pgAdd")
