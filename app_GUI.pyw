@@ -3,6 +3,7 @@ from cash_register_GUI import *
 from datetime import datetime
 from models.product_model import Producto
 from models.sale_model import Venta
+from models.carrito_model import CarritoCompras
 from services.database_service import (
     crear_conexion,
     verificar_tablas,
@@ -23,6 +24,7 @@ class MiRegisradora(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        self.carrito = CarritoCompras()  # Instancia del carrito
         # Aquí puedes añadir tus conexiones de señales y slots
         # Ejemplo: self.ui.bt_cerrar.clicked.connect(self.close)
         #control-barra.de.titulos
@@ -157,11 +159,11 @@ class MiRegisradora(QtWidgets.QMainWindow):
         conn = crear_conexion()
         print("\n--- AGREGAR PRODUCTO ---")
         try:
-            codigo = self.ui.lineEdit_cod_pgAdd.text()
-            nombre = self.ui.lineEdit_name_pgAdd.text()
-            cantidad = int(self.ui.lineEdit_cnt_pgAdd.text())
-            precio_compra = float(self.ui.lineEdit_preComp_pgAdd.text())
-            precio_venta = float(self.ui.lineEdit_preVenta_pgAdd.text())
+            codigo = self.ui.lineEdit_cod_pgAdd.text().rstrip()
+            nombre = self.ui.lineEdit_name_pgAdd.text().rstrip()
+            cantidad = int(self.ui.lineEdit_cnt_pgAdd.text()).rstrip()
+            precio_compra = float(self.ui.lineEdit_preComp_pgAdd.text()).rstrip()
+            precio_venta = float(self.ui.lineEdit_preVenta_pgAdd.text()).rstrip()
 
             # Verificar si el código ya existe
             cursor = conn.cursor()
@@ -192,7 +194,7 @@ class MiRegisradora(QtWidgets.QMainWindow):
     def contro_bt_buscar_pgDelet(self):
         conn = crear_conexion()
         try:
-            codigo = self.ui.lineEdit_cod_pgDelet.text()
+            codigo = self.ui.lineEdit_cod_pgDelet.text().rstrip()
         # Verificar si el código ya existe
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM productos WHERE codigo = ?", (codigo,))
@@ -216,7 +218,7 @@ class MiRegisradora(QtWidgets.QMainWindow):
     def control_bt_delete_pgDelete(self):
         conn = crear_conexion()
         try:
-            codigo = self.ui.lineEdit_cod_pgDelet.text()
+            codigo = self.ui.lineEdit_cod_pgDelet.text().rstrip()
             if not codigo:
                 self.ui.label_pgDelet.setText("Debe de ingresar un código válido")
                 self.ui.label_pgDelet.setStyleSheet("color: red;")
@@ -248,8 +250,8 @@ class MiRegisradora(QtWidgets.QMainWindow):
     def control_bt_update_pgUpdate(self):
         conn = crear_conexion()
         try:
-            codigo = self.ui.lineEdit_cnt_pgUpdate.text()
-            cantidad = int(self.ui.lineEdit_cod_pgUpdate.text())
+            codigo = self.ui.lineEdit_cnt_pgUpdate.text().rstrip()
+            cantidad = int(self.ui.lineEdit_cod_pgUpdate.text()).rstrip()
             if actualizar_inventario(conn, codigo, cantidad):
                 self.ui.label_pgUpdate.setText("Éxito, producto actualizado correctamente")
                 self.ui.label_pgUpdate.setStyleSheet("color: green;")
@@ -268,7 +270,7 @@ class MiRegisradora(QtWidgets.QMainWindow):
     def control_bt_buscar_pgSearch(self):
         conn = crear_conexion()
         try:
-            word_clave = self.ui.lineEdit_pgSearch.text().strip()
+            word_clave = self.ui.lineEdit_pgSearch.text().rstrip()
             if word_clave:
                 productos = buscar_productos(conn, word_clave)
                 i = len(productos)
@@ -296,13 +298,16 @@ class MiRegisradora(QtWidgets.QMainWindow):
     def control_bt_add_pgRegisterSale(self):
         conn = crear_conexion()
         try:
-            codigo = self.ui.lineEdit_cod_pgRegisterSale.text()
-            cantidad = self.ui.lineEdit_cnt_pgRegisterSale.text()
-            descuento = int(self.ui.lineEdit_desc_pgRegisterSale.text())
-            vendedor = float(self.ui.lineEdit_desc_pgRegisterSale.text())
-            print("\n--- REGISTRAR VENTA ---")
-            productos_vendidos = []
-            total = 0
+            codigo = self.ui.lineEdit_cod_pgRegisterSale.text().rstrip()
+            cantidad = self.ui.lineEdit_cnt_pgRegisterSale.text().rstrip()
+            
+            descuento = int(self.ui.lineEdit_desc_pgRegisterSale.text()).rstrip()
+            vendedor = float(self.ui.lineEdit_desc_pgRegisterSale.text()).rstrip()
+            # Validaciones básicas
+            if not codigo or not cantidad:
+                self.ui.label_pgRegisterSale.setText("Código y cantidad son obligatorios")
+                self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+                return
             
         except ValueError as e:
             print(f"Error: {e}")
