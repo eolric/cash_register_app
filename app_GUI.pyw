@@ -161,9 +161,9 @@ class MiRegisradora(QtWidgets.QMainWindow):
         try:
             codigo = self.ui.lineEdit_cod_pgAdd.text().rstrip()
             nombre = self.ui.lineEdit_name_pgAdd.text().rstrip()
-            cantidad = int(self.ui.lineEdit_cnt_pgAdd.text()).rstrip()
-            precio_compra = float(self.ui.lineEdit_preComp_pgAdd.text()).rstrip()
-            precio_venta = float(self.ui.lineEdit_preVenta_pgAdd.text()).rstrip()
+            cantidad = int(self.ui.lineEdit_cnt_pgAdd.text().rstrip())
+            precio_compra = float(self.ui.lineEdit_preComp_pgAdd.text().rstrip())
+            precio_venta = float(self.ui.lineEdit_preVenta_pgAdd.text().rstrip())
 
             # Verificar si el código ya existe
             cursor = conn.cursor()
@@ -251,7 +251,7 @@ class MiRegisradora(QtWidgets.QMainWindow):
         conn = crear_conexion()
         try:
             codigo = self.ui.lineEdit_cnt_pgUpdate.text().rstrip()
-            cantidad = int(self.ui.lineEdit_cod_pgUpdate.text()).rstrip()
+            cantidad = int(self.ui.lineEdit_cod_pgUpdate.text().rstrip())
             if actualizar_inventario(conn, codigo, cantidad):
                 self.ui.label_pgUpdate.setText("Éxito, producto actualizado correctamente")
                 self.ui.label_pgUpdate.setStyleSheet("color: green;")
@@ -299,31 +299,185 @@ class MiRegisradora(QtWidgets.QMainWindow):
         conn = crear_conexion()
         try:
             codigo = self.ui.lineEdit_cod_pgRegisterSale.text().rstrip()
-            cantidad = self.ui.lineEdit_cnt_pgRegisterSale.text().rstrip()
-            
-            descuento = int(self.ui.lineEdit_desc_pgRegisterSale.text()).rstrip()
-            vendedor = float(self.ui.lineEdit_desc_pgRegisterSale.text()).rstrip()
+            cantidad_in = self.ui.lineEdit_cnt_pgRegisterSale.text().rstrip()
+            descuento_in = self.ui.lineEdit_desc_pgRegisterSale.text().rstrip()
+            vendedor = self.ui.lineEdit_vend_pgRegisterSale.text().rstrip()
             # Validaciones básicas
-            if not codigo or not cantidad:
+            if not codigo or not cantidad_in:
                 self.ui.label_pgRegisterSale.setText("Código y cantidad son obligatorios")
                 self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
                 return
+            cantidad = int(cantidad_in)
+            descuento = float(descuento_in) if descuento_in else 0.0
             
+            # Verificar que el producto existe y tiene stock suficiente
+            cursor = conn.cursor()
+            cursor.execute("SELECT nombre, cantidad, precio_venta FROM productos WHERE codigo = ?", (codigo,))
+            producto = cursor.fetchone()
+            
+            if not producto:
+                self.ui.label_pgRegisterSale.setText("Producto no encontrado")
+                self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+                return
+                
+            nombre_producto, stock_actual, precio_venta = producto
+            
+            if cantidad <= 0:
+                self.ui.label_pgRegisterSale.setText("Cantidad debe ser positiva")
+                self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+                return
+                
+            if stock_actual < cantidad:
+                self.ui.label_pgRegisterSale.setText(f"Stock insuficiente (Disponible: {stock_actual})")
+                self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+                return
+                
+            # Agregar al carrito
+            subtotal = self.carrito.agregar_item(
+                codigo, nombre_producto, cantidad, precio_venta, descuento, vendedor
+            )
+            
+            # Mostrar información al usuario
+            mensaje = f"Se agregó: {nombre_producto} al carrito de compras\nCant: {cantidad}\n${subtotal:.2f}"
+            QtWidgets.QMessageBox.information(self, "Éxito", mensaje)
+            
+            # Limpiar campos (excepto vendedor)
+            self.ui.lineEdit_cod_pgRegisterSale.clear()
+            self.ui.lineEdit_cnt_pgRegisterSale.clear()
+            self.ui.lineEdit_desc_pgRegisterSale.clear()
+        
         except ValueError as e:
             print(f"Error: {e}")
             self.ui.label_pgRegisterSale.setText("Error: Verifique los datos ingresados")
             self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
-            return
+            QtWidgets.QMessageBox.warning(self, "Error", 
+                                          "¡Debe ingresar valores válidos!\nCantidad debe ser número entero\nDescuento debe ser número")
 
     def control_bt_finish_pgRegisterSale(self):
-        pass
+        if not self.carrito.obtener_items():
+            self.ui.label_pgRegisterSale.setText("No hay productos en la venta")
+            self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+            return
+        
+        try:
+            efectivo = float(self.ui.lineEdit_efect_pgRegisterSale.text().strip())
+            total = self.carrito.calcular_total()
+            cambio = efectivo - total
+            if efectivo < total:
+                self.ui.label_pgRegisterSale.setText(f"Efectivo insuficiente. Total: ${total:.2f}")
+                self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+                return
+            conn = crear_conexion()
+            # Registrar ventas
+            for item in self.carrito.obtener_items():
+                venta = Venta(
+                    item['codigo'],
+                    item['cantidad'], 
+                    item['descuento'],
+                    item['vendedor']
+                )
+                if not registrar_venta(conn, venta):
+                    QtWidgets.QMessageBox.critical(self, "Error", 
+                                                   f"No se logro registrar la venta del producto {item['codigo']}")
+            self.ui.label_pgRegisterSale.setText("Éxito: venta registrada correctamente")
+            self.ui.label_pgRegisterSale.setStyleSheet("color: green;")
+            QtWidgets.QMessageBox.information(self, "Éxito", "Cambio: ${:.2f}".format(cambio))
+        
+            # Limpiar
+            self.carrito.vaciar()
+            self.ui.lineEdit_cod_pgRegisterSale.clear()
+            self.ui.lineEdit_cnt_pgRegisterSale.clear()
+            self.ui.lineEdit_desc_pgRegisterSale.clear()
+            self.ui.lineEdit_efect_pgRegisterSale.clear()
+            self.ui.lineEdit_vend_pgRegisterSale.clear()
+
+        except ValueError as e:
+            print(f"Error: {e}")
+            self.ui.label_pgRegisterSale.setText("Error: Verifique los datos ingresados")
+            self.ui.label_pgRegisterSale.setStyleSheet("color: red;")
+            QtWidgets.QMessageBox.warning(self, "Error", "¡Debe ingresar valores válidos!\nLos campos no pueden estar en blanco, debe ingresar una cantidad en efectivo")
+            return
 
     def control_bt_search_pgSearchSale(self):
-        pass
+        conn = crear_conexion()
+        try:
+            fecha_inicio = self.ui.lineEdit_iniDate_pgSearchSale.text().strip()
+            fecha_fin = self.ui.lineEdit_finDate_pgSearchSale.text().strip()
+            
+            if not fecha_inicio or not fecha_fin:
+                QtWidgets.QMessageBox.warning(self, "Advertencia", "Debe ingresar ambas fechas")
+                return
+            ventas = consultar_ventas_por_fecha(conn, fecha_inicio, fecha_fin)
+            
+            if not ventas:
+                QtWidgets.QMessageBox.information(self, "Información", "No se encontraron ventas en ese rango de fechas")
+                return
+            # Mostrar resultados en la tabla
+            self.ui.tableWidget_pgSearchSale.setRowCount(len(ventas))
+            
+            for row_idx, venta in enumerate(ventas):
+                # Calcular subtotal
+                subtotal = venta[3] * venta[4] * (1 - venta[5]/100)
+                
+                # Añadir datos a la tabla
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(venta[0]))  # Fecha
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(venta[1]))  # Hora
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(venta[2]))  # Producto
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(str(venta[3])))  # Cantidad
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 4, QtWidgets.QTableWidgetItem(f"{venta[4]:.2f}"))  # Precio
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 5, QtWidgets.QTableWidgetItem(f"{venta[5]:.2f}"))  # Descuento
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 6, QtWidgets.QTableWidgetItem(f"{subtotal:.2f}"))  # Subtotal
+                self.ui.tableWidget_pgSearchSale.setItem(row_idx, 7, QtWidgets.QTableWidgetItem(venta[6]))  # Vendedor
+                
+        except Exception as e:
+            print(f"Error al buscar ventas: {e}")
+            QtWidgets.QMessageBox.critical(self, "Error", "Ocurrió un error al buscar ventas")
 
     def control_bt_download_pgReport(self):
-        pass
+        conn = crear_conexion()
+        try:
+            fecha_inicio = self.ui.lineEdit_iniDate_pgReport.text().strip()
+            fecha_fin = self.ui.lineEdit_finDate_pgReport.text().strip()
+            nombre_doc = self.ui.lineEdit_nameDoc_pgReport.text().strip()
+            
+            if not fecha_inicio or not fecha_fin:
+                QtWidgets.QMessageBox.warning(self, "Advertencia", "Debe ingresar ambas fechas")
+                return
+                
+            if not nombre_doc:
+                nombre_doc = f"reporte_ventas_{fecha_inicio}_{fecha_fin}"
+                
+            # Definir la ruta donde se guardará el reporte
+            # Abrir diálogo para seleccionar ubicación
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            "Guardar Reporte",
+            f"{nombre_doc}.csv",  # Nombre sugerido
+            "Archivos CSV (*.csv);;Todos los archivos (*)"
+            )
+            if not file_path:  # Usuario canceló
+                return
 
+            # Asegurar extensión .csv
+            if not file_path.lower().endswith('.csv'):
+                file_path += '.csv'
+                
+            if exportar_reporte_csv(conn, fecha_inicio, fecha_fin, file_path):
+                QtWidgets.QMessageBox.information(
+                    self, 
+                    "Éxito", 
+                    f"Reporte generado exitosamente\nGuardado en: {file_path}"
+                )
+            else:
+                QtWidgets.QMessageBox.warning(
+                    self, 
+                    "Advertencia", 
+                    "No se pudo generar el reporte o no hay datos para el rango de fechas"
+                )
+                
+        except Exception as e:
+            print(f"Error al generar reporte: {e}")
+            QtWidgets.QMessageBox.critical(self, "Error", "Ocurrió un error al generar el reporte:\n{str(e)}")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

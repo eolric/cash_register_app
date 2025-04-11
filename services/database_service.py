@@ -109,9 +109,9 @@ def buscar_productos(conn, criterio):
         # Buscar por código exacto o nombre que contenga el criterio
         cursor.execute("""
             SELECT * FROM productos 
-            WHERE codigo = ? OR nombre LIKE ?
+            WHERE codigo LIKE ? OR nombre LIKE ?
             ORDER BY nombre
-        """, (criterio, f'%{criterio}%'))
+        """, (f'%{criterio}%', f'%{criterio}%'))
         return cursor.fetchall()
     except sqlite3.Error as e:
         print(f"Error al buscar productos: {e}")
